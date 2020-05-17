@@ -1,4 +1,5 @@
 const inquirer = require('inquirer');
+const mysql = require ('mysql');
 
 const start = () => {
     return inquirer.prompt([
@@ -77,8 +78,61 @@ const viewContent = () => {
     ])
 };
 
+const addDepartmentInfo = (ans) => {
+    return inquirer.prompt([
+        {
+            type: 'input',
+            name: 'deptName',
+            message: 'What is the department\'s name?'
+        }
+    ])
+};
+
+const addEmployeeInfo = () => {
+    return inquirer.prompt([
+        {
+            type: 'input',
+            name: 'firstName',
+            message: 'What is the employee\'s first name?',
+        },
+        {
+            type: 'input',
+            name: 'lastName',
+            message: 'What is the employee\'s last name?',
+        }
+    ])
+};
+
+const addRoleInfo = () => {
+    return inquirer.prompt([
+        {
+            type: 'input',
+            name: 'title',
+            message: 'What is the name of the role?',
+        },
+        {
+            type: 'input',
+            name: 'salary',
+            message: 'What is the salary of the role?',
+        },
+        {
+            type: 'rawlist',
+            name: 'dept',
+            message: 'What department should the role be placed in?',
+            choices:[]
+        }
+    ])
+};
+
+
+
+
+
 exports.start = start;
 exports.addContent = addContent;
 exports.deleteContent = deleteContent;
 exports.updateContent = updateContent;
 exports.viewContent = viewContent;
+exports.addEmployeeInfo =addEmployeeInfo;
+exports.addRoleInfo = addRoleInfo;
+exports.addDepartmentInfo = addDepartmentInfo;

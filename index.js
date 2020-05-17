@@ -21,8 +21,19 @@ connection.connect(function (err) {
             switch (ans.action) {
                 case 'Add Content':
                     actions.addContent()
-                        .then(ans => {
+                        .then(() => {
                             console.log(ans.addAction);
+                            switch(ans.addAction){
+                                case 'Add Employee':
+                                    actions.addEmployeeInfo();
+                                    break
+                                case 'Add Role':
+                                    
+                                    actions.addRoleInfo();
+                                    break
+                                case 'Add Department':
+                                    actions.addDepartmentInfo();
+                            }
                         })
                     break;
                 case 'View Content':
