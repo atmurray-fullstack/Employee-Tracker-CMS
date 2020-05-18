@@ -14,21 +14,22 @@ var connection = mysql.createConnection({
 
 connection.connect(function (err) {
     if (err) throw err;
+
     // run the start function after the connection is made to prompt the user
     actions.start()
         .then(ans => {
             console.log('You chose ' + ans.action);
             switch (ans.action) {
                 case 'Add Content':
+
                     actions.addContent()
-                        .then(() => {
+                        .then((ans) => {
                             console.log(ans.addAction);
-                            switch(ans.addAction){
+                            switch (ans.addAction) {
                                 case 'Add Employee':
                                     actions.addEmployeeInfo();
                                     break
                                 case 'Add Role':
-                                    
                                     actions.addRoleInfo();
                                     break
                                 case 'Add Department':
@@ -36,6 +37,9 @@ connection.connect(function (err) {
                             }
                         })
                     break;
+
+
+
                 case 'View Content':
                     actions.viewContent()
                         .then(ans => {

@@ -1,6 +1,4 @@
-const addRecord = ()=>{
-    // var query = 'SELECT '
-}
+
 
 
 

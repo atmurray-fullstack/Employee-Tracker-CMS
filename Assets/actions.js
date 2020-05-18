@@ -1,5 +1,14 @@
 const inquirer = require('inquirer');
-const mysql = require ('mysql');
+const mysql = require('mysql');
+const cTable = require('console.table');
+const fs = require('fs');
+var connection = mysql.createConnection({
+    host: "localhost",
+    port: 3307,
+    user: "root",
+    password: "root",
+    database: "employee_managementdb"
+});
 
 const start = () => {
     return inquirer.prompt([
@@ -104,24 +113,33 @@ const addEmployeeInfo = () => {
 };
 
 const addRoleInfo = () => {
-    return inquirer.prompt([
-        {
-            type: 'input',
-            name: 'title',
-            message: 'What is the name of the role?',
-        },
-        {
-            type: 'input',
-            name: 'salary',
-            message: 'What is the salary of the role?',
-        },
-        {
-            type: 'rawlist',
-            name: 'dept',
-            message: 'What department should the role be placed in?',
-            choices:[]
-        }
-    ])
+    connection.query('SELECT * FROM department', function (err, results) {
+        if (err) throw err;
+        console.log(results);
+
+        inquirer
+            .prompt([
+                {
+                    type: 'input',
+                    name: 'title',
+                    message: 'What is the name of the role?',
+                },
+                {
+                    type: 'input',
+                    name: 'salary',
+                    message: 'What is the salary of the role?',
+                },
+                {
+                    type: 'rawlist',
+                    name: 'dept',
+                    message: 'What department should the role be placed in?',
+                    choices: ["hey"]
+                }
+            ]).then((ans) => {
+                console.log(ans)
+            })
+
+    });
 };
 
 
@@ -133,6 +151,6 @@ exports.addContent = addContent;
 exports.deleteContent = deleteContent;
 exports.updateContent = updateContent;
 exports.viewContent = viewContent;
-exports.addEmployeeInfo =addEmployeeInfo;
+exports.addEmployeeInfo = addEmployeeInfo;
 exports.addRoleInfo = addRoleInfo;
 exports.addDepartmentInfo = addDepartmentInfo;
