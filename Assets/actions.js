@@ -20,7 +20,8 @@ const start = () => {
                 'Add Content',
                 'View Content',
                 'Update Content',
-                'Delete Content'
+                'Delete Content',
+                'EXIT'
             ]
         }
     ])
@@ -103,9 +104,7 @@ const addEmployeeInfo = () => {
 
         connection.query('SELECT * FROM employee', function (err, employee) {
             if (err) throw err;
-            console.log(employee);
-            console.log(roles);
-
+            console.log(roles)
             inquirer
                 .prompt([
                     {
@@ -125,9 +124,8 @@ const addEmployeeInfo = () => {
                         choices: function () {
                             var arr = [];
                             for (let i = 0; i < roles.length; i++) {
-                                arr.push(roles[i].title);
+                                arr.push(roles[i].id+' '+roles[i].title);
                             }
-                            console.log(arr);
                             return arr;
                         }
                     },
@@ -140,37 +138,29 @@ const addEmployeeInfo = () => {
                             for (let i = 0; i < employee.length; i++) {
                                 arr.push(employee[i].id + ' ' + employee[i].first_name + ' ' + employee[i].last_name);
                             }
-                            console.log(arr)
                             return arr;
                         }
                     }
                 ])
-            // .then((ans) => {
+                .then((ans) => {
 
-            //     const { title: title, salary: salary, dept: dept } = ans;
-            //     roleObj = {
-            //         title: title,
-            //         salary: parseFloat(salary),
-            //         department_id: dept
-            //     }
-            //     results.forEach((item, index) => {
-            //         if (item.name === roleObj.department_id) {
-            //             roleObj.department_id = item.id;
-            //         }
-            //     });
-
-            //     console.log(roleObj);
-            //     connection.query(
-            //         "INSERT INTO role SET ?",
-            //         roleObj,
-            //         function (err) {
-            //             if (err) throw err;
-            //             console.log("New role created successfully!");
-            //             // re-prompt the user for if they want to bid or post
-            //             start();
-            //         }
-            //     )
-            // })
+                    employeeObj = {
+                        first_name: ans.first_name,
+                        last_name: ans.last_name,
+                        role_id: parseInt(ans.role_id[0]),
+                        manager_id: parseInt(ans.manager_id[0])
+                    }
+                    connection.query(
+                        "INSERT INTO employee SET ?",
+                        employeeObj,
+                        function (err) {
+                            if (err) throw err;
+                            console.log("New employee recorded successfully!");
+                            // re-prompt the user for if they want to bid or post
+                            start();
+                        }
+                    )
+                })
         })
 
     });

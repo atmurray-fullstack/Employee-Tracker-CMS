@@ -5,7 +5,7 @@ const fs = require('fs');
 const actions = require('./Assets/actions');
 
 var connection = mysql.createConnection({
-    multipleStatements:true,
+    multipleStatements: true,
     host: "localhost",
     port: 3307,
     user: "root",
@@ -59,6 +59,11 @@ connection.connect(function (err) {
                             console.log(ans.deleteAction);
                         })
                     break;
+                case 'EXIT':
+                    connection.end();
+                    return
+                
+
             }
         })
 
