@@ -98,25 +98,87 @@ const addDepartmentInfo = (ans) => {
 };
 
 const addEmployeeInfo = () => {
-    return inquirer.prompt([
-        {
-            type: 'input',
-            name: 'firstName',
-            message: 'What is the employee\'s first name?',
-        },
-        {
-            type: 'input',
-            name: 'lastName',
-            message: 'What is the employee\'s last name?',
-        }
-    ])
+    connection.query('SELECT * FROM role', function (err, roles) {
+        if (err) throw err;
+
+        connection.query('SELECT * FROM employee', function (err, employee) {
+            if (err) throw err;
+            console.log(employee);
+            console.log(roles);
+
+            inquirer
+                .prompt([
+                    {
+                        type: 'input',
+                        name: 'first_name',
+                        message: 'What is the first name of the employee?',
+                    },
+                    {
+                        type: 'input',
+                        name: 'last_name',
+                        message: 'What is the last name of the employee?',
+                    },
+                    {
+                        type: 'list',
+                        name: 'role_id',
+                        message: 'What will be the employee\'s job?',
+                        choices: function () {
+                            var arr = [];
+                            for (let i = 0; i < roles.length; i++) {
+                                arr.push(roles[i].title);
+                            }
+                            console.log(arr);
+                            return arr;
+                        }
+                    },
+                    {
+                        type: 'list',
+                        name: 'manager_id',
+                        message: 'Who will be the employee\'s Manager?',
+                        choices: function () {
+                            var arr = [];
+                            for (let i = 0; i < employee.length; i++) {
+                                arr.push(employee[i].id + ' ' + employee[i].first_name + ' ' + employee[i].last_name);
+                            }
+                            console.log(arr)
+                            return arr;
+                        }
+                    }
+                ])
+            // .then((ans) => {
+
+            //     const { title: title, salary: salary, dept: dept } = ans;
+            //     roleObj = {
+            //         title: title,
+            //         salary: parseFloat(salary),
+            //         department_id: dept
+            //     }
+            //     results.forEach((item, index) => {
+            //         if (item.name === roleObj.department_id) {
+            //             roleObj.department_id = item.id;
+            //         }
+            //     });
+
+            //     console.log(roleObj);
+            //     connection.query(
+            //         "INSERT INTO role SET ?",
+            //         roleObj,
+            //         function (err) {
+            //             if (err) throw err;
+            //             console.log("New role created successfully!");
+            //             // re-prompt the user for if they want to bid or post
+            //             start();
+            //         }
+            //     )
+            // })
+        })
+
+    });
 };
 
 const addRoleInfo = () => {
     connection.query('SELECT * FROM department', function (err, results) {
         if (err) throw err;
-        console.log(results);
-
         inquirer
             .prompt([
                 {
@@ -130,14 +192,44 @@ const addRoleInfo = () => {
                     message: 'What is the salary of the role?',
                 },
                 {
-                    type: 'rawlist',
+                    type: 'list',
                     name: 'dept',
                     message: 'What department should the role be placed in?',
-                    choices: ["hey"]
+                    choices: function () {
+                        var arr = [];
+                        for (let i = 0; i < results.length; i++) {
+                            arr.push(results[i].name);
+                        }
+                        return arr;
+                    }
                 }
             ]).then((ans) => {
-                console.log(ans)
+
+                const { title: title, salary: salary, dept: dept } = ans;
+                roleObj = {
+                    title: title,
+                    salary: parseFloat(salary),
+                    department_id: dept
+                }
+                results.forEach((item, index) => {
+                    if (item.name === roleObj.department_id) {
+                        roleObj.department_id = item.id;
+                    }
+                });
+
+                console.log(roleObj);
+                connection.query(
+                    "INSERT INTO role SET ?",
+                    roleObj,
+                    function (err) {
+                        if (err) throw err;
+                        console.log("New role created successfully!");
+                        // re-prompt the user for if they want to bid or post
+                        start();
+                    }
+                )
             })
+
 
     });
 };

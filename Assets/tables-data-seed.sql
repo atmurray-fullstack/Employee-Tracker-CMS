@@ -14,33 +14,33 @@ VALUES('academics');
 
 --ROLE
 INSERT INTO role(title, salary, department_id)
-VALUES('Teacher',35000.12,5);
+VALUES('Teacher',35000.12,4);
 
 INSERT INTO role(title, salary, department_id)
 VALUES('Nurse',45000.12,1);
 
 INSERT INTO role(title, salary, department_id)
-VALUES('student',0,3);
+VALUES('student',0,4);
 
 INSERT INTO role(title, salary, department_id)
-VALUES('Coach',38000.12,3);
+VALUES('Coach',38000.12,2);
 
 INSERT INTO role(title, salary, department_id)
-VALUES('Superintendent',78000.99,5);
+VALUES('Superintendent',78000.99,4);
 
 --EMPLOYEES
 INSERT INTO employee(first_name, last_name, role_id, manager_id)
-VALUES('Scott','Weiland', 5,null);
+VALUES('Scott','Weiland', 7,null);
 
 INSERT INTO employee(first_name, last_name, role_id, manager_id)
-VALUES('Elen','DuBree', 2,1);
+VALUES('Elen','DuBree', 3,1);
 
 INSERT INTO employee(first_name, last_name, role_id, manager_id)
-VALUES('Henery','McClatchen', 4,1);
+VALUES('Henery','McClatchen', 6,1);
 
 INSERT INTO employee(first_name, last_name, role_id, manager_id)
-VALUES('Pete','Smith', 3,2);
+VALUES('Pete','Smith', 5,2);
 
 INSERT INTO employee(first_name, last_name, role_id, manager_id)
-VALUES('Martha','Peterbuilt', 1,1);
+VALUES('Martha','Peterbuilt', 4,1);
 
