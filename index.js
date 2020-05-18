@@ -22,7 +22,6 @@ connection.connect(function (err) {
             console.log('You chose ' + ans.action);
             switch (ans.action) {
                 case 'Add Content':
-
                     actions.addContent()
                         .then((ans) => {
                             console.log(ans.addAction);
@@ -38,9 +37,6 @@ connection.connect(function (err) {
                             }
                         })
                     break;
-
-
-
                 case 'View Content':
                     actions.viewContent()
                         .then(ans => {
@@ -61,15 +57,11 @@ connection.connect(function (err) {
                     break;
                 case 'EXIT':
                     connection.end();
-                    return
-                
-
+                    break;
             }
+            return;
         })
 
-    // connection.query(add.addDepartment(ans),(err)=>{
-    //     if(err) throw err
-    // })
 });
 
 

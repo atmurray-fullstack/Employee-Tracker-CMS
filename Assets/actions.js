@@ -92,10 +92,23 @@ const addDepartmentInfo = (ans) => {
     return inquirer.prompt([
         {
             type: 'input',
-            name: 'deptName',
+            name: 'name',
             message: 'What is the department\'s name?'
         }
     ])
+        .then((ans) => {
+            console.log(ans)
+            connection.query(
+                "INSERT INTO department SET ?",
+                ans,
+                function (err) {
+                    if (err) throw err;
+                    console.log("New department created successfully!");
+                    // re-prompt the user for if they want to bid or post
+                    start();
+                }
+            )
+        });
 };
 
 const addEmployeeInfo = () => {
@@ -124,7 +137,7 @@ const addEmployeeInfo = () => {
                         choices: function () {
                             var arr = [];
                             for (let i = 0; i < roles.length; i++) {
-                                arr.push(roles[i].id+' '+roles[i].title);
+                                arr.push(roles[i].id + ' ' + roles[i].title);
                             }
                             return arr;
                         }
