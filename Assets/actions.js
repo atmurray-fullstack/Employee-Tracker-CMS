@@ -89,11 +89,47 @@ const viewContent = () => {
     ]).then((ans) => {
         let choice = ans.viewAction.toLowerCase().slice(0, ans.viewAction.length - 1);
         if (ans.viewAction === 'View total department budgets') {
-            console.log('budget display');
+            console.log(' '.repeat(2));
+            console.log('Displaying departments and budgets utilized.');
             console.log('_'.repeat(100));
-            
+            connection.query(
+                'SELECT * FROM employee', (err, employee) => {
+                    if (err) throw err;
+                    connection.query(
+                        'SELECT * FROM role', (err, role) => {
+                            if (err) throw err;
+                            connection.query(
+                                'SELECT * FROM department', (err, department) => {
+                                    if (err) throw err;
+                                    const dept = department;
+                                    const roles = role;
+                                    const employees = employee;
 
-        } else{
+                                    for (let i = 0; i < roles.length; i++) {
+                                        roles[i].employee_cnt = 0;
+                                        for (let e = 0; e < employees.length; e++) {
+                                            if (employees[e].role_id === roles[i].id) {
+                                                roles[i].employee_cnt += 1
+                                            }
+                                        }
+                                    }
+                                    for (let i = 0; i < dept.length; i++) {
+                                        dept[i].budget_utilized = 0;
+                                        for (let e = 0; e < roles.length; e++) {
+                                            if (roles[e].department_id === dept[i].id) {
+                                                dept[i].budget_utilized += roles[e].salary*roles[e].employee_cnt;
+                                            }
+                                        }
+                                    }
+                                    console.table(dept);
+
+                                }
+                            )
+                        }
+                    )
+                }
+            )
+        } else {
             connection.query(
                 'SELECT * FROM ' + choice, (err, results) => {
                     if (err) throw err;
@@ -117,7 +153,6 @@ const addDepartmentInfo = () => {
         }
     ])
         .then((ans) => {
-            console.log(ans)
             connection.query(
                 "INSERT INTO department SET ?",
                 ans,
@@ -137,7 +172,6 @@ const addEmployeeInfo = () => {
 
         connection.query('SELECT * FROM employee', function (err, employee) {
             if (err) throw err;
-            console.log(roles)
             inquirer
                 .prompt([
                     {
@@ -240,7 +274,6 @@ const addRoleInfo = () => {
                     }
                 });
 
-                console.log(roleObj);
                 connection.query(
                     "INSERT INTO role SET ?",
                     roleObj,
