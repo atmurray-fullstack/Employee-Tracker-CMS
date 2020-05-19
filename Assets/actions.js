@@ -65,12 +65,66 @@ const updateContent = () => {
             name: 'updateAction',
             message: 'What would you like to update?',
             choices: [
-                'Update Employee',
-                'Update Role',
-                'Update Department'
+                'Employee role',
+                'Employee manager'
             ]
         }
     ])
+};
+
+const updateEmployeeRoles = () => {
+    connection.query('SELECT * FROM role', function (err, roles) {
+        if (err) throw err;
+
+        connection.query('SELECT * FROM employee', function (err, employee) {
+            if (err) throw err;
+            console.log(roles)
+            console.log(employee)
+            inquirer.prompt([
+                {
+                    type: 'list',
+                    name: 'employee_name',
+                    message: 'Who would you like to reassign?',
+                    choices: function () {
+                        const arr = [];
+                        for (let i = 0; i < employee.length; i++) {
+                            arr.push(employee[i].id + ' ' + employee[i].first_name + ' ' + employee[i].last_name);
+                        }
+                        return arr;
+                    }
+                },
+                {
+                    type: 'list',
+                    message: 'What will their new role be?',
+                    name: 'role',
+                    choices: function () {
+                        const arr = [];
+                        for (let i = 0; i < roles.length; i++) {
+                            arr.push(roles[i].id + ' ' + roles[i].title);
+                        }
+                        return arr
+                    }
+                }
+
+            ]).then((ans) => {
+                connection.query('UPDATE employee SET ? WHERE ?',
+                    [{
+                        role_id: parseInt(ans.role[0])
+                    },
+                    {
+                        id: parseInt(ans.employee_name[0])
+                    }]
+                    , (err) => {
+                        if (err) throw err;
+                        console.log('Employee role updated successfully!');
+                    })
+            })
+        })
+    })
+};
+
+const updateEmployeeManager = () => {
+    console.log(ans.updateAction);
 };
 
 const viewContent = () => {
@@ -117,7 +171,7 @@ const viewContent = () => {
                                         dept[i].budget_utilized = 0;
                                         for (let e = 0; e < roles.length; e++) {
                                             if (roles[e].department_id === dept[i].id) {
-                                                dept[i].budget_utilized += roles[e].salary*roles[e].employee_cnt;
+                                                dept[i].budget_utilized += roles[e].salary * roles[e].employee_cnt;
                                             }
                                         }
                                     }
@@ -298,6 +352,8 @@ exports.start = start;
 exports.addContent = addContent;
 exports.deleteContent = deleteContent;
 exports.updateContent = updateContent;
+exports.updateEmployeeRoles = updateEmployeeRoles;
+exports.updateEmployeeManager = updateEmployeeManager;
 exports.viewContent = viewContent;
 exports.addEmployeeInfo = addEmployeeInfo;
 exports.addRoleInfo = addRoleInfo;

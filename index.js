@@ -24,7 +24,6 @@ connection.connect(function (err) {
                 case 'Add Content':
                     actions.addContent()
                         .then((ans) => {
-                            console.log(ans.addAction);
                             switch (ans.addAction) {
                                 case 'Add Employee':
                                     actions.addEmployeeInfo();
@@ -44,7 +43,14 @@ connection.connect(function (err) {
                 case 'Update Content':
                     actions.updateContent()
                         .then(ans => {
-                            console.log(ans.updateAction);
+                            switch(ans.updateAction){
+                                case 'Employee role':
+                                    actions.updateEmployeeRoles();
+                                    break
+                                case 'Employee manager':
+                                    actions.updateEmployeeManager();
+                                    break
+                            }
                         })
                     break;
                 case 'Delete Content':
