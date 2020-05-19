@@ -10,7 +10,68 @@ var connection = mysql.createConnection({
     database: "employee_managementdb"
 });
 
-const start = () => {
+const start = ()=> {
+    
+
+        // run the start function after the connection is made to prompt the user
+        prompt()
+            .then(ans => {
+                console.log('You chose ' + ans.action);
+                switch (ans.action) {
+                    case 'Add Content':
+                        addContent()
+                            .then((ans) => {
+                                switch (ans.addAction) {
+                                    case 'Add Employee':
+                                        addEmployeeInfo();
+                                        break
+                                    case 'Add Role':
+                                        addRoleInfo();
+                                        break
+                                    case 'Add Department':
+                                        addDepartmentInfo();
+                                }
+                            })
+                        break;
+                    case 'View Content':
+                        viewContent();
+
+                        break;
+                    case 'Update Content':
+                        updateContent()
+                            .then(ans => {
+                                switch (ans.updateAction) {
+                                    case 'Employee role':
+                                        updateEmployeeRoles();
+                                        break
+                                    case 'Employee manager':
+                                        updateEmployeeManager();
+                                        break
+                                }
+                            })
+                        break;
+                    case 'Delete Content':
+                        deleteContent()
+                            .then(ans => {
+                                console.log(ans.deleteAction);
+                            })
+                        break;
+                    case 'EXIT':
+                        connection.end();
+                        process.exit();
+                }
+                return;
+            })
+
+   
+
+};
+
+
+
+
+
+const prompt = () => {
     return inquirer.prompt([
         {
             type: 'rawlist',
@@ -116,7 +177,11 @@ const updateEmployeeRoles = () => {
                     }]
                     , (err) => {
                         if (err) throw err;
+                        console.log('_'.repeat(100));
                         console.log('Employee role updated successfully!');
+                        console.log('_'.repeat(100));
+
+                        start();
                     })
             })
         })
@@ -176,7 +241,7 @@ const viewContent = () => {
                                         }
                                     }
                                     console.table(dept);
-
+                                    start();
                                 }
                             )
                         }
@@ -191,7 +256,7 @@ const viewContent = () => {
                     console.log('Displaying ' + ans.viewAction);
                     console.log('_'.repeat(100))
                     console.table(results);
-
+                    start();
                 }
             )
         }
@@ -277,7 +342,6 @@ const addEmployeeInfo = () => {
                         function (err) {
                             if (err) throw err;
                             console.log("New employee recorded successfully!");
-                            // re-prompt the user for if they want to bid or post
                             start();
                         }
                     )
@@ -347,8 +411,8 @@ const addRoleInfo = () => {
 
 
 
-
 exports.start = start;
+exports.prompt = prompt;
 exports.addContent = addContent;
 exports.deleteContent = deleteContent;
 exports.updateContent = updateContent;

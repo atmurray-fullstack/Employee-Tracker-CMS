@@ -15,59 +15,8 @@ var connection = mysql.createConnection({
 
 connection.connect(function (err) {
     if (err) throw err;
-
-    // run the start function after the connection is made to prompt the user
-    actions.start()
-        .then(ans => {
-            console.log('You chose ' + ans.action);
-            switch (ans.action) {
-                case 'Add Content':
-                    actions.addContent()
-                        .then((ans) => {
-                            switch (ans.addAction) {
-                                case 'Add Employee':
-                                    actions.addEmployeeInfo();
-                                    break
-                                case 'Add Role':
-                                    actions.addRoleInfo();
-                                    break
-                                case 'Add Department':
-                                    actions.addDepartmentInfo();
-                            }
-                        })
-                    break;
-                case 'View Content':
-                    actions.viewContent();
-                        
-                    break;
-                case 'Update Content':
-                    actions.updateContent()
-                        .then(ans => {
-                            switch(ans.updateAction){
-                                case 'Employee role':
-                                    actions.updateEmployeeRoles();
-                                    break
-                                case 'Employee manager':
-                                    actions.updateEmployeeManager();
-                                    break
-                            }
-                        })
-                    break;
-                case 'Delete Content':
-                    actions.deleteContent()
-                        .then(ans => {
-                            console.log(ans.deleteAction);
-                        })
-                    break;
-                case 'EXIT':
-                    connection.end();
-                    break;
-            }
-            return;
-        })
-
+actions.start();
 });
-
 
 
 
