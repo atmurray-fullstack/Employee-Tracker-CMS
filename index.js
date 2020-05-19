@@ -38,10 +38,8 @@ connection.connect(function (err) {
                         })
                     break;
                 case 'View Content':
-                    actions.viewContent()
-                        .then(ans => {
-                            console.log(ans.viewAction);
-                        })
+                    actions.viewContent();
+                        
                     break;
                 case 'Update Content':
                     actions.updateContent()

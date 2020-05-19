@@ -80,15 +80,35 @@ const viewContent = () => {
             name: 'viewAction',
             message: 'What would you like to view?',
             choices: [
-                'view Employees',
-                'veiw Roles',
-                'veiw Departments'
+                'Employees',
+                'Roles',
+                'Departments',
+                'View total department budgets'
             ]
         }
-    ])
+    ]).then((ans) => {
+        let choice = ans.viewAction.toLowerCase().slice(0, ans.viewAction.length - 1);
+        if (ans.viewAction === 'View total department budgets') {
+            console.log('budget display');
+            console.log('_'.repeat(100));
+            
+
+        } else{
+            connection.query(
+                'SELECT * FROM ' + choice, (err, results) => {
+                    if (err) throw err;
+                    console.log('_'.repeat(100))
+                    console.log('Displaying ' + ans.viewAction);
+                    console.log('_'.repeat(100))
+                    console.table(results);
+
+                }
+            )
+        }
+    });
 };
 
-const addDepartmentInfo = (ans) => {
+const addDepartmentInfo = () => {
     return inquirer.prompt([
         {
             type: 'input',

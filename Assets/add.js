@@ -2,4 +2,3 @@
 
 
 
-exports.addDepartment = addDepartment; 
