@@ -10,60 +10,60 @@ var connection = mysql.createConnection({
     database: "employee_managementdb"
 });
 
-const start = ()=> {
-    
+const start = () => {
 
-        // run the start function after the connection is made to prompt the user
-        prompt()
-            .then(ans => {
-                console.log('You chose ' + ans.action);
-                switch (ans.action) {
-                    case 'Add Content':
-                        addContent()
-                            .then((ans) => {
-                                switch (ans.addAction) {
-                                    case 'Add Employee':
-                                        addEmployeeInfo();
-                                        break
-                                    case 'Add Role':
-                                        addRoleInfo();
-                                        break
-                                    case 'Add Department':
-                                        addDepartmentInfo();
-                                }
-                            })
-                        break;
-                    case 'View Content':
-                        viewContent();
 
-                        break;
-                    case 'Update Content':
-                        updateContent()
-                            .then(ans => {
-                                switch (ans.updateAction) {
-                                    case 'Employee role':
-                                        updateEmployeeRoles();
-                                        break
-                                    case 'Employee manager':
-                                        updateEmployeeManager();
-                                        break
-                                }
-                            })
-                        break;
-                    case 'Delete Content':
-                        deleteContent()
-                            .then(ans => {
-                                console.log(ans.deleteAction);
-                            })
-                        break;
-                    case 'EXIT':
-                        connection.end();
-                        process.exit();
-                }
-                return;
-            })
+    // run the start function after the connection is made to prompt the user
+    prompt()
+        .then(ans => {
+            console.log('You chose ' + ans.action);
+            switch (ans.action) {
+                case 'Add Content':
+                    addContent()
+                        .then((ans) => {
+                            switch (ans.addAction) {
+                                case 'Add Employee':
+                                    addEmployeeInfo();
+                                    break
+                                case 'Add Role':
+                                    addRoleInfo();
+                                    break
+                                case 'Add Department':
+                                    addDepartmentInfo();
+                            }
+                        })
+                    break;
+                case 'View Content':
+                    viewContent();
 
-   
+                    break;
+                case 'Update Content':
+                    updateContent()
+                        .then(ans => {
+                            switch (ans.updateAction) {
+                                case 'Employee role':
+                                    updateEmployeeRoles();
+                                    break
+                                case 'Employee manager':
+                                    updateEmployeeManager();
+                                    break
+                            }
+                        })
+                    break;
+                case 'Delete Content':
+                    deleteContent()
+                        .then(ans => {
+                            console.log(ans.deleteAction);
+                        })
+                    break;
+                case 'EXIT':
+                    connection.end();
+                    process.exit();
+            }
+            return;
+        })
+
+
 
 };
 
@@ -206,23 +206,21 @@ const viewContent = () => {
             ]
         }
     ]).then((ans) => {
-        let choice = ans.viewAction.toLowerCase().slice(0, ans.viewAction.length - 1);
-        if (ans.viewAction === 'View total department budgets') {
-            console.log(' '.repeat(2));
-            console.log('Displaying departments and budgets utilized.');
-            console.log('_'.repeat(100));
-            connection.query(
-                'SELECT * FROM employee', (err, employee) => {
-                    if (err) throw err;
-                    connection.query(
-                        'SELECT * FROM role', (err, role) => {
-                            if (err) throw err;
-                            connection.query(
-                                'SELECT * FROM department', (err, department) => {
-                                    if (err) throw err;
-                                    const dept = department;
-                                    const roles = role;
-                                    const employees = employee;
+
+
+        connection.query(
+            'SELECT * FROM employee', (err, employee) => {
+                if (err) throw err;
+                connection.query(
+                    'SELECT * FROM role', (err, role) => {
+                        if (err) throw err;
+                        connection.query(
+                            'SELECT * FROM department', (err, department) => {
+                                if (err) throw err;
+                                const dept = department;
+                                const roles = role;
+                                const employees = employee;
+                                if (ans.viewAction === 'View total department budgets') {
 
                                     for (let i = 0; i < roles.length; i++) {
                                         roles[i].employee_cnt = 0;
@@ -240,28 +238,56 @@ const viewContent = () => {
                                             }
                                         }
                                     }
+                                    console.log(' '.repeat(2));
+                                    console.log('Displaying departments and budgets utilized.');
+                                    console.log('_'.repeat(100));
                                     console.table(dept);
                                     start();
+
+                                } else if (ans.viewAction === 'Employees') {
+
+                                    for (let i = 0; i < employees.length; i++) {
+                                        employees.forEach(function (element) {
+                                            if (employees[i].manager_id === element.id) {
+                                                employees[i].manager = element.first_name + ' ' + element.last_name;
+                                            }
+                                        })
+
+
+                                        for (let e = 0; e < roles.length; e++) {
+                                            if (employees[i].role_id === roles[e].id) {
+                                                employees[i].title = roles[e].title;
+                                                employees[i].salary = roles[e].salary;
+                                                employees[i].dept = roles[e].department_id;
+                                            }
+                                        }
+
+                                        for (let e = 0; e < dept.length; e++) {
+                                            if (employees[i].dept === dept[e].id) {
+                                                employees[i].dept = dept[e].name;
+
+                                            }
+                                        }
+                                    }
+
+                                    employees.forEach((elem)=>{
+                                        delete elem.role_id
+                                        delete elem.manager_id
+                                    })
+                                    console.log('_'.repeat(100))
+                                    console.log('Displaying ' + ans.viewAction);
+                                    console.log('_'.repeat(100))
+                                    console.table(employees)
+                                    start();
+
                                 }
-                            )
-                        }
-                    )
-                }
-            )
-        } else {
-            connection.query(
-                'SELECT * FROM ' + choice, (err, results) => {
-                    if (err) throw err;
-                    console.log('_'.repeat(100))
-                    console.log('Displaying ' + ans.viewAction);
-                    console.log('_'.repeat(100))
-                    console.table(results);
-                    start();
-                }
-            )
-        }
-    });
-};
+                            })
+                    })
+            })
+
+    })
+}
+
 
 const addDepartmentInfo = () => {
     return inquirer.prompt([
