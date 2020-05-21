@@ -4,6 +4,7 @@ const cTable = require('console.table');
 const fs = require('fs');
 const actions = require('./Assets/actions');
 
+
 var connection = mysql.createConnection({
     multipleStatements: true,
     host: "localhost",
@@ -12,6 +13,7 @@ var connection = mysql.createConnection({
     password: "root",
     database: "employee_managementdb"
 });
+
 
 connection.connect(function (err) {
     if (err) throw err;

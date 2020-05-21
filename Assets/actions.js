@@ -2,6 +2,7 @@ const inquirer = require('inquirer');
 const mysql = require('mysql');
 const cTable = require('console.table');
 const fs = require('fs');
+
 var connection = mysql.createConnection({
     host: "localhost",
     port: 3307,
@@ -67,10 +68,6 @@ const start = () => {
 
 
 };
-
-
-
-
 
 const prompt = () => {
     return inquirer.prompt([
@@ -140,8 +137,7 @@ const updateEmployeeRoles = () => {
 
         connection.query('SELECT * FROM employee', function (err, employee) {
             if (err) throw err;
-            console.log(roles)
-            console.log(employee)
+            
             inquirer.prompt([
                 {
                     type: 'list',
@@ -192,7 +188,6 @@ const updateEmployeeRoles = () => {
 const updateEmployeeManager = () => {
     connection.query('SELECT * FROM employee', function (err, employee) {
         if (err) throw err;
-        console.log(employee)
         inquirer.prompt([
             {
                 type: 'list',
@@ -352,7 +347,6 @@ const viewContent = () => {
                                                 employeeObj.department = answer.dept.slice(2, answer.dept.length);
                                             }
                                         })
-                                        // console.log(employeeObj);
                                         employees.forEach((deptEmployee) => {
                                             for (let i = 0; i < employees.length; i++) {
                                                 if (deptEmployee.manager_id === employees[i].id) {
@@ -393,18 +387,23 @@ const viewContent = () => {
                                         }
                                     ])
                                         .then((roleAns) => {
-                                            console.log(roleAns);
+                                           
                                             const id = parseInt(roleAns.role[0]);
-                                            console.log(id);
                                             employees.forEach((roleEmployee) => {
+
                                                 if (roleEmployee.role_id === id) {
                                                     roleEmployee.title = roleAns.role.slice(2, roleAns.role.length);
                                                 }
+                                                
+
                                                 for (let i = 0; i < employees.length; i++) {
                                                     if (roleEmployee.manager_id === employees[i].id) {
                                                         roleEmployee.manager = employees[i].first_name + ' ' + employees[i].last_name;
                                                     }
+                                                    
+                                                    delete roleEmployee.role_id;
                                                     delete roleEmployee.manager_id;
+                                               
                                                 }
 
                                             })
@@ -570,8 +569,6 @@ const addRoleInfo = () => {
 
     });
 };
-
-
 
 
 exports.start = start;
