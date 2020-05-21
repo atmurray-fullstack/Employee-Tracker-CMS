@@ -270,7 +270,7 @@ const viewContent = () => {
                                         }
                                     }
 
-                                    employees.forEach((elem)=>{
+                                    employees.forEach((elem) => {
                                         delete elem.role_id
                                         delete elem.manager_id
                                     })
@@ -280,7 +280,77 @@ const viewContent = () => {
                                     console.table(employees)
                                     start();
 
-                                }
+                                } else if (ans.viewAction === 'Departments') {
+
+                                    inquirer.prompt([
+                                        {
+                                            type: 'list',
+                                            name: 'dept',
+                                            message: 'What department would you like to view?',
+                                            choices: function () {
+                                                let arr = [];
+                                                department.forEach((el) => {
+                                                    arr.push(el.id + ' ' + el.name)
+                                                })
+                                                return arr
+                                            }
+                                        }
+                                    ]).then((answer) => {
+                                        const employeeObj = {};
+                                        employeeObj.roles = [];
+                                        employeeObj.id = parseInt(answer.dept[0]);
+                                        roles.forEach((el) => {
+                                            if (el.department_id === employeeObj.id) {
+                                                employeeObj.roles.push({ id: el.id, title: el.title })
+                                                employeeObj.department = answer.dept.slice(2, answer.dept.length);
+                                            }
+                                        })
+                                        // console.log(employeeObj);
+                                        employees.forEach((deptEmployee) => {
+                                            for (let i = 0; i < employees.length; i++) {
+                                                if (deptEmployee.manager_id === employees[i].id) {
+                                                    deptEmployee.manager = employees[i].first_name + ' ' + employees[i].last_name;
+                                                    delete deptEmployee.manager_id
+                                                }
+                                            }
+                                            for (let i = 0; i < employeeObj.roles.length; i++) {
+                                                if (deptEmployee.role_id === employeeObj.roles[i].id) {
+                                                    deptEmployee.title = employeeObj.roles[i].title;
+                                                    deptEmployee.department = employeeObj.department;
+                                                    delete deptEmployee.role_id;
+                                                }
+                                            }
+                                        })
+                                        for (let i = 0; i < employees.length; i++) {
+                                            if (!employees[i].title) {
+                                                delete employees[i]
+                                            }
+                                        }
+                                        console.table(employees);
+                                       
+                                        start();
+                                    })
+                                } else(
+                                    inquirer.prompt([
+                                        {
+                                            type: 'list',
+                                            name: 'role',
+                                            message: 'What work role would you like to view?',
+                                            choices: function () {
+                                                let arr = [];
+                                                role.forEach((el) => {
+                                                    arr.push(el.id + ' ' + el.title)
+                                                })
+                                                return arr
+                                            }
+                                        }
+                                    ])
+                                        .then((roleAns)=>{
+                                            console.log(roleAns);
+                                            
+                                            
+                                        })
+                                )
                             })
                     })
             })
