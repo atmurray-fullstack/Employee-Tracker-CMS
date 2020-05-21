@@ -53,7 +53,8 @@ const start = () => {
                 case 'Delete Content':
                     deleteContent()
                         .then(ans => {
-                            console.log(ans.deleteAction);
+                            console.log('functionality of '+ans.deleteAction+' is still in progress');
+                            start();
                         })
                     break;
                 case 'EXIT':
@@ -189,7 +190,53 @@ const updateEmployeeRoles = () => {
 };
 
 const updateEmployeeManager = () => {
-    console.log(ans.updateAction);
+    connection.query('SELECT * FROM employee', function (err, employee) {
+        if (err) throw err;
+        console.log(employee)
+        inquirer.prompt([
+            {
+                type: 'list',
+                name: 'employee_name',
+                message: 'Who would you like to reassign?',
+                choices: function () {
+                    const arr = [];
+                    for (let i = 0; i < employee.length; i++) {
+                        arr.push(employee[i].id + ' ' + employee[i].first_name + ' ' + employee[i].last_name);
+                    }
+                    return arr;
+                }
+            },
+            {
+                type: 'rawlist',
+                message: 'Who will their new manager be?',
+                name: 'manager',
+                choices: function () {
+                    const arr = [];
+                    for (let i = 0; i < employee.length; i++) {
+                        arr.push(employee[i].id + ' ' + employee[i].first_name + ' ' + employee[i].last_name);
+                    }
+                    return arr;
+                }
+            }
+
+        ]).then((ans) => {
+            connection.query('UPDATE employee SET ? WHERE ?',
+                [{
+                    manager_id: parseInt(ans.manager[0])
+                },
+                {
+                    id: parseInt(ans.employee_name[0])
+                }]
+                , (err) => {
+                    if (err) throw err;
+                    console.log('_'.repeat(100));
+                    console.log('Employee manager updated successfully!');
+                    console.log('_'.repeat(100));
+
+                    start();
+                })
+        })
+    })
 };
 
 const viewContent = () => {
@@ -327,28 +374,48 @@ const viewContent = () => {
                                             }
                                         }
                                         console.table(employees);
-                                       
+
                                         start();
                                     })
-                                } else(
+                                } else (
                                     inquirer.prompt([
                                         {
-                                            type: 'list',
+                                            type: 'rawlist',
                                             name: 'role',
                                             message: 'What work role would you like to view?',
                                             choices: function () {
                                                 let arr = [];
                                                 role.forEach((el) => {
-                                                    arr.push(el.id + ' ' + el.title)
+                                                    arr.push(el.id + ' ' + el.title);
                                                 })
-                                                return arr
+                                                return arr;
                                             }
                                         }
                                     ])
-                                        .then((roleAns)=>{
+                                        .then((roleAns) => {
                                             console.log(roleAns);
-                                            
-                                            
+                                            const id = parseInt(roleAns.role[0]);
+                                            console.log(id);
+                                            employees.forEach((roleEmployee) => {
+                                                if (roleEmployee.role_id === id) {
+                                                    roleEmployee.title = roleAns.role.slice(2, roleAns.role.length);
+                                                }
+                                                for (let i = 0; i < employees.length; i++) {
+                                                    if (roleEmployee.manager_id === employees[i].id) {
+                                                        roleEmployee.manager = employees[i].first_name + ' ' + employees[i].last_name;
+                                                    }
+                                                    delete roleEmployee.manager_id;
+                                                }
+
+                                            })
+                                            for (let i = 0; i < employees.length; i++) {
+                                                if (!employees[i].title) {
+                                                    delete employees[i];
+                                                }
+                                            }
+                                            console.table(employees);
+                                            start();
+
                                         })
                                 )
                             })
