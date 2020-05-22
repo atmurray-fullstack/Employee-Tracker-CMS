@@ -408,7 +408,7 @@ const viewContent = () => {
                                                     }
                                                     
                                                     delete roleEmployee.role_id;
-                                                    delete roleEmployee.manager_id;
+                                                    
                                                
                                                 }
 

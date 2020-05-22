@@ -8,7 +8,7 @@ const actions = require('./Assets/actions');
 var connection = mysql.createConnection({
     multipleStatements: true,
     host: "localhost",
-    port: 3307,
+    port: process.env.PORT || 3307,
     user: "root",
     password: "root",
     database: "employee_managementdb"
