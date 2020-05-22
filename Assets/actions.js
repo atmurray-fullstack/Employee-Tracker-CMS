@@ -241,9 +241,9 @@ const viewContent = () => {
             name: 'viewAction',
             message: 'What would you like to view?',
             choices: [
-                'Employees',
-                'Roles',
-                'Departments',
+                'View all Employees',
+                'View Employees by Role',
+                'View Employees by Department',
                 'View total department budgets'
             ]
         }
@@ -286,7 +286,7 @@ const viewContent = () => {
                                     console.table(dept);
                                     start();
 
-                                } else if (ans.viewAction === 'Employees') {
+                                } else if (ans.viewAction === 'View all Employees') {
 
                                     for (let i = 0; i < employees.length; i++) {
                                         employees.forEach(function (element) {
@@ -322,7 +322,7 @@ const viewContent = () => {
                                     console.table(employees)
                                     start();
 
-                                } else if (ans.viewAction === 'Departments') {
+                                } else if (ans.viewAction === 'View Employees by Department') {
 
                                     inquirer.prompt([
                                         {
@@ -393,12 +393,18 @@ const viewContent = () => {
 
                                                 if (roleEmployee.role_id === id) {
                                                     roleEmployee.title = roleAns.role.slice(2, roleAns.role.length);
+                                                    for (let i =0;i < roles.length;i++){
+                                                        if (roleEmployee.role_id = roles[i].id){
+                                                            roleEmployee.salary = roles[i].salary;
+                                                        }
+                                                    }
                                                 }
                                                 
 
                                                 for (let i = 0; i < employees.length; i++) {
                                                     if (roleEmployee.manager_id === employees[i].id) {
                                                         roleEmployee.manager = employees[i].first_name + ' ' + employees[i].last_name;
+
                                                     }
                                                     
                                                     delete roleEmployee.role_id;
@@ -458,7 +464,7 @@ const addEmployeeInfo = () => {
                     {
                         type: 'input',
                         name: 'first_name',
-                        message: 'What is the first name of the employee?',
+                        message: 'What is the first name of the employee?'                        
                     },
                     {
                         type: 'input',
