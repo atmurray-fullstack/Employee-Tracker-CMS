@@ -1,3 +1,5 @@
+DROP IF EXISTS employee_managementdb;
+
 USE employee_managementdb;
 
 CREATE TABLE department(
